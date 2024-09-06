@@ -1,11 +1,13 @@
 package com.example.instagram_backend.domain.ContentManagement.controller;
 
+import com.example.instagram_backend.domain.ContentManagement.dto.AddPostRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.dto.FeedResponseDto;
+import com.example.instagram_backend.domain.ContentManagement.dto.UpdatePostRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.service.PostService;
+import com.example.instagram_backend.domain.response.ApiResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +30,16 @@ public class PostController {
 //        return postService.findPost();
 //    }
 //
+    @PostMapping("/posts")
+    public ResponseEntity<ApiResponseEntity> addPost(@RequestBody AddPostRequestDto postRequestDto) {
+        postService.addPost(postRequestDto);
+        return ApiResponseEntity.toResponseEntity();
 
+    }
+
+    @PutMapping("/posts")
+    public ResponseEntity<ApiResponseEntity> updatePost(@RequestBody UpdatePostRequestDto postRequestDto) {
+        postService.updatePost(postRequestDto);
+        return ApiResponseEntity.toResponseEntity();
+    }
 }

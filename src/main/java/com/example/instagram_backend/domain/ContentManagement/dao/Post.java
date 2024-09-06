@@ -51,9 +51,8 @@ public class Post {
     private List<Media> medias = new ArrayList<Media>();
 
 
-    //JsonIgnore은 가져오지 않게 한거임 Post 조회할때..
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

@@ -3,22 +3,28 @@ package com.example.instagram_backend.domain.ContentManagement.service;
 
 import com.example.instagram_backend.domain.ContentManagement.dao.Media;
 import com.example.instagram_backend.domain.ContentManagement.dao.Post;
+import com.example.instagram_backend.domain.ContentManagement.dto.AddPostRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.dto.FeedResponseDto;
 import com.example.instagram_backend.domain.ContentManagement.dto.MediaResponseDto;
+import com.example.instagram_backend.domain.ContentManagement.dto.UpdatePostRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.repository.PostRepository;
 import com.example.instagram_backend.domain.SocialRelations.dao.Relation;
 import com.example.instagram_backend.domain.SocialRelations.repository.RelationRepository;
+import com.example.instagram_backend.domain.UserInfoManagement.dao.User;
+import com.example.instagram_backend.domain.UserInfoManagement.repository.UserRepository;
 import com.example.instagram_backend.domain.UserInteractions.dao.Comment;
 import com.example.instagram_backend.domain.UserInteractions.dao.Like;
 import com.example.instagram_backend.domain.UserInteractions.dto.CommentResponseDto;
 import com.example.instagram_backend.domain.UserInteractions.dto.LikeResponseDto;
+import com.example.instagram_backend.domain.response.CustomException;
+import com.example.instagram_backend.domain.response.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -27,13 +33,56 @@ public class PostService {
     private PostRepository postRepository;
     @Autowired
     private RelationRepository relationRepository;
+    @Autowired
+    private UserRepository UserRepository;
 
     public List<Post> findByUserId(Long userId) {
         //System.out.print(postRepository.findByUserUserId(userId).toString());
         return postRepository.findByUserUserId(userId);
     }
 
+    public void addPost(AddPostRequestDto postRequestDto) {
+        if(postRequestDto.getUserId() == null){
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
 
+        Optional<User> user = UserRepository.findByUserId(postRequestDto.getUserId());
+        if(!user.isPresent()){
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+        postRepository.save(Post.builder()
+                .content(postRequestDto.getContent())
+                .user(user.get())
+                .liking("0")
+                .rgtDate(String.valueOf(LocalDateTime.now()))
+                .build());
+    }
+
+    public void updatePost(UpdatePostRequestDto postRequestDto) {
+        if(postRequestDto.getUserId() == null || postRequestDto.getPostId() == null){
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
+        Optional<User> user = UserRepository.findByUserId(postRequestDto.getUserId());
+        if(!user.isPresent()){
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+        Optional<Post> post = postRepository.findById(postRequestDto.getPostId());
+        if(!post.isPresent()){
+            throw new CustomException(ErrorCode.NOT_FOUND);
+        }
+        if(post.get().getUser().getUserId() != user.get().getUserId()){
+            throw new CustomException(ErrorCode.FORBIDDEN);
+        }
+
+        postRepository.save(Post.builder()
+                .postId(postRequestDto.getPostId())
+                .content(postRequestDto.getContent())
+                .user(post.get().getUser())
+                .liking(post.get().getLiking())
+                .rgtDate(String.valueOf(post.get().getRgtDate()))
+                .build());
+    }
 
     public List<FeedResponseDto> findFolollowingPostsByUserId(Long userId){
 
