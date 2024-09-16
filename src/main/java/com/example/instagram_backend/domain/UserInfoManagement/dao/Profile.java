@@ -10,9 +10,9 @@ import lombok.*;
 @Builder // 빌더 패턴
 @Table(name = "profiles")
 public class Profile {
-    //    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long profileId;
     @Id
+    private Long profileId;
+
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "userId")  // 외래 키로 profiles 테이블에서 userId를 사용합니다.
@@ -22,11 +22,16 @@ public class Profile {
     private String profileImg;
 
     @Column(nullable = false)
-    private int profileText;
+    private String profileText;
 
     @Column(nullable = false)
     private int followings;
 
     @Column(nullable = false)
     private int followers;
+
+    public void updateProfile(String profileImg, String profileText){
+        this.profileImg = profileImg;
+        this.profileText = profileText;
+    }
 }
