@@ -20,7 +20,8 @@ public class Comment {
     @Column(nullable = false)
     private String content;
     @Column(nullable = false)
-    private Date rgtDate;
+//    private Date rgtDate;
+    private String rgtDate; // 일단 erd에 String 이길래
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="postId")

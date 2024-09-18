@@ -3,10 +3,8 @@ package com.example.instagram_backend.domain.ContentManagement.service;
 
 import com.example.instagram_backend.domain.ContentManagement.dao.Media;
 import com.example.instagram_backend.domain.ContentManagement.dao.Post;
-import com.example.instagram_backend.domain.ContentManagement.dto.AddPostRequestDto;
-import com.example.instagram_backend.domain.ContentManagement.dto.FeedResponseDto;
-import com.example.instagram_backend.domain.ContentManagement.dto.MediaResponseDto;
-import com.example.instagram_backend.domain.ContentManagement.dto.UpdatePostRequestDto;
+import com.example.instagram_backend.domain.ContentManagement.dto.*;
+import com.example.instagram_backend.domain.ContentManagement.repository.LikeRepository;
 import com.example.instagram_backend.domain.ContentManagement.repository.PostRepository;
 import com.example.instagram_backend.domain.SocialRelations.dao.Relation;
 import com.example.instagram_backend.domain.SocialRelations.repository.RelationRepository;
@@ -34,7 +32,10 @@ public class PostService {
     @Autowired
     private RelationRepository relationRepository;
     @Autowired
-    private UserRepository UserRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     public List<Post> findByUserId(Long userId) {
         //System.out.print(postRepository.findByUserUserId(userId).toString());
@@ -46,7 +47,7 @@ public class PostService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        Optional<User> user = UserRepository.findByUserId(postRequestDto.getUserId());
+        Optional<User> user = userRepository.findByUserId(postRequestDto.getUserId());
         if(!user.isPresent()){
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
@@ -63,7 +64,7 @@ public class PostService {
             throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
-        Optional<User> user = UserRepository.findByUserId(postRequestDto.getUserId());
+        Optional<User> user = userRepository.findByUserId(postRequestDto.getUserId());
         if(!user.isPresent()){
             throw new CustomException(ErrorCode.NOT_FOUND);
         }
@@ -142,6 +143,31 @@ public class PostService {
 
         return feedResponseDtos;
 
+    }
+
+    public void addLike(AddLikeRequestDto likeRequestDto) {
+        if(likeRequestDto.getPostId() == null){
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+        // 게시글 존재 여부 확인
+        Post post = postRepository.findById(likeRequestDto.getPostId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+        // 사용자 존재 여부 확인
+        User user = userRepository.findById(likeRequestDto.getUserId())
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+        // 좋아요 중복 체크
+        if (likeRepository.existsByUserAndPost(user, post)) {
+            throw new CustomException(ErrorCode.BAD_REQUEST);
+        }
+
+        // 새로운 좋아요 저장
+        Like like = Like.builder()
+                .user(user)
+                .post(post)
+                .build();
+
+        likeRepository.save(like);
     }
 
 }

@@ -11,5 +11,6 @@ public class CommentResponseDto {
 
     private Long commentId;
     private String content;
-    private Date rgtDate;
+//    private Date rgtDate;
+    private String rgtDate;
 }

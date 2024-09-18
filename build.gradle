@@ -25,10 +25,9 @@ repositories {
 
 dependencies {
     // Swagger(Spring 3.x.x 이상부터 SpringFox 대신, SpringDoc)
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-    implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
-
+    // 2.0.2로 하니까 swagger 안나와서 2.0.3으로 업그레이드 했더니 됨.
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.3'
+//    implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -38,8 +37,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test' // junit 5 도 포함
+//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher' // 나는 얘때문에 테스트가 안돌아가서 junit5로 테스트 작성
 }
 
 tasks.named('test') {
