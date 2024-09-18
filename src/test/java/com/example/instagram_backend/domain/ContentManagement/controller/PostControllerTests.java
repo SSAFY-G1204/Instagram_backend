@@ -1,22 +1,23 @@
 package com.example.instagram_backend.domain.ContentManagement.controller;
 
+import com.example.instagram_backend.domain.ContentManagement.dto.AddLikeRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.dto.AddPostRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.dto.UpdatePostRequestDto;
 import com.example.instagram_backend.domain.ContentManagement.service.PostService;
 import com.example.instagram_backend.domain.response.ApiResponseEntity;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PostControllerTests {
 
     @Mock
@@ -25,9 +26,9 @@ public class PostControllerTests {
     @InjectMocks
     private PostController postController;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        // MockitoExtension handles initialization automatically
     }
 
     @Test
@@ -50,5 +51,16 @@ public class PostControllerTests {
 
         assertEquals(ApiResponseEntity.toResponseEntity(), response);
         verify(postService, times(1)).updatePost(postRequestDto);
+    }
+
+    @Test
+    public void testAddLike() {
+        AddLikeRequestDto addLikeRequestDto = new AddLikeRequestDto(1L, 1L);
+        doNothing().when(postService).addLike(addLikeRequestDto);
+
+        ResponseEntity<ApiResponseEntity> response = postController.addLike(addLikeRequestDto);
+
+        assertEquals(ApiResponseEntity.toResponseEntity(), response);
+        verify(postService, times(1)).addLike(addLikeRequestDto);
     }
 }
