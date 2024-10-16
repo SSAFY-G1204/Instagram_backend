@@ -21,7 +21,15 @@ public class UserService {
         return userRepository.findUsersByNickname(keyword);
     }
 
+    public User findById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("UnExpected user"));
+    }
 
+    public User findByEmail(String email){
+        return userRepository.findByEmail(email)
+                .orElseThrow(()->new IllegalArgumentException("UnExpected user"));
+    }
 
 
 }
