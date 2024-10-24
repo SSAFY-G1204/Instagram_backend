@@ -42,4 +42,10 @@ public class PostController {
         postService.updatePost(postRequestDto);
         return ApiResponseEntity.toResponseEntity();
     }
+
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<ApiResponseEntity> deletePost(@PathVariable Long postId) {
+        postService.deletePostById(postId);
+        return ApiResponseEntity.toResponseEntity();
+    }
 }

@@ -38,15 +38,15 @@ public class Post {
     private String rgtDate;
 
     //유저키
-    @OneToMany(mappedBy ="post")
+    @OneToMany(mappedBy ="post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = false)
     private List<Like> likes = new ArrayList<Like>();
 
-    @OneToMany(mappedBy ="post")
+    @OneToMany(mappedBy ="post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable = false)
     private List<Comment> comments = new ArrayList<Comment>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Column(nullable=false)
     private List<Media> medias = new ArrayList<Media>();
 

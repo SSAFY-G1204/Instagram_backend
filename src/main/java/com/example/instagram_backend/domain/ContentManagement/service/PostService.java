@@ -144,5 +144,8 @@ public class PostService {
 
     }
 
+    // Cascade 옵션을 사용하여 post 안에 있는 like, comments, medias 들이 모두 삭제된다.
+    public void deletePostById(Long postId) { postRepository.deleteById(postId); }
+
 }
 
